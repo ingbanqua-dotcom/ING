@@ -453,14 +453,21 @@ if (transferButton && transferPanel) {
     if (expensesElement) expensesElement.textContent = (expenses + amount).toLocaleString('fr-FR') + ' €';
     var accountOption = document.querySelector('#transfers .form-control option');
     if (accountOption) accountOption.textContent = 'Current account · ' + newBalance.toLocaleString('fr-FR') + ' €';
+    var today = new Date();
+    var dayOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    var dateStr = today.toLocaleDateString('fr-FR', dayOptions).replace(/^(\d+)/, function(day) {
+      return day.charAt(0) === '0' ? day.substring(1) : day;
+    });
+    dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    
     var row = document.createElement('tr');
     row.className = 'saved-transfer';
-    row.innerHTML = '<td>27 Auguste 2026</td><td>' + name + '</td><td class="positive">Processing</td><td class="amount">' + amount.toLocaleString('fr-FR') + ' €</td>';
+    row.innerHTML = '<td>' + dateStr + '</td><td>' + name + '</td><td class="positive">Processing</td><td class="amount">' + amount.toLocaleString('fr-FR') + ' €</td>';
     var financialTableBody = document.querySelector('#financials > table tbody');
     if (financialTableBody) financialTableBody.prepend(row);
     var recentTransferRow = document.createElement('tr');
     recentTransferRow.className = 'saved-transfer';
-    recentTransferRow.innerHTML = '<td>27 Auguste 2026</td><td>' + name + '</td><td class="positive">Processing</td><td class="amount">' + amount.toLocaleString('fr-FR') + ' €</td>';
+    recentTransferRow.innerHTML = '<td>' + dateStr + '</td><td>' + name + '</td><td class="positive">Processing</td><td class="amount">' + amount.toLocaleString('fr-FR') + ' €</td>';
     var transfersTableBody = document.querySelector('#transfers > table tbody');
     if (transfersTableBody) transfersTableBody.prepend(recentTransferRow);
     transferModal.hidden = false;
