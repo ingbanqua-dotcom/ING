@@ -468,9 +468,17 @@ if (transferButton && transferPanel) {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({beneficiaryName: name, beneficiaryEmail: email, rib: rib, amount: amount.toLocaleString('fr-FR') + ' €'})
-    }).then(function(response){return response.json().then(function(data){return {ok: response.ok, data: data};});})
+    }).then(function(response){
+      return response.text().then(function(body){
+        var data;
+        try { data = JSON.parse(body); } catch (error) {
+          throw new Error('Réponse invalide du serveur (' + response.status + ').');
+        }
+        return {ok: response.ok, data: data};
+      });
+    })
       .then(function(result){var emailStatus = document.querySelector('#email-status'); if (emailStatus) emailStatus.textContent = result.ok && result.data.success ? 'Email de confirmation envoyé.' : (result.data.message || 'Email non envoyé.');})
-      .catch(function(){var emailStatus = document.querySelector('#email-status'); if (emailStatus) emailStatus.textContent = 'Email non envoyé : serveur indisponible.';});
+      .catch(function(error){var emailStatus = document.querySelector('#email-status'); if (emailStatus) emailStatus.textContent = 'Email non envoyé : ' + (error.message || 'serveur indisponible.');});
   });
 }
 </script>
